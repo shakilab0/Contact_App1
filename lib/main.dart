@@ -1,10 +1,14 @@
 import 'package:contact_app1/pages/contact_details_page.dart';
 import 'package:contact_app1/pages/contact_home_page.dart';
 import 'package:contact_app1/pages/new_contact_page.dart';
+import 'package:contact_app1/providers/cantact_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context)=>ContactProvider(),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,16 +23,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green
       ),
 
-      home: NewContactPage(),
+      //home: NewContactPage(),
 
-      // initialRoute: ContactHomePage.routeName,
-      //
-      // routes: {
-      //   ContactHomePage.routeName:(context)=>ContactHomePage(),
-      //   NewContactPage.routeName:(context)=>NewContactPage(),
-      //   ContactDetailsPage.routeName:(context)=>ContactDetailsPage(),
-      //
-      // },
+      initialRoute: ContactHomePage.routeName,
+
+      routes: {
+        ContactHomePage.routeName:(context)=>ContactHomePage(),
+        NewContactPage.routeName:(context)=>NewContactPage(),
+        ContactDetailsPage.routeName:(context)=>ContactDetailsPage(),
+
+      },
     );
   }
 }

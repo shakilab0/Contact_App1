@@ -1,10 +1,12 @@
 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// String? getFormattedDate(DateTime dt, String pattern){
-//   DateFormat(pattern).format(dt);
-// }
-
-String getFormattedDate(DateTime dt, String pattern) {
-  return dt.toString();
+String  getFormattedDate(DateTime dt, String pattern){
+ return DateFormat(pattern).format(dt);
 }
+
+void showMsg(BuildContext context,String msg)=> ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+
+
+

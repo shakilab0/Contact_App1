@@ -1,8 +1,13 @@
 import 'dart:io';
+import 'package:contact_app1/models/contact_model.dart';
+import 'package:contact_app1/providers/cantact_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:contact_app1/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+
 
 class NewContactPage extends StatefulWidget {
   static const String routeName='/new_contact';
@@ -51,7 +56,6 @@ class _NewContactPageState extends State<NewContactPage> {
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 24),
           children: [
-
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -60,9 +64,9 @@ class _NewContactPageState extends State<NewContactPage> {
                     width:120,
                     height: 120,
                     child: Card(
-                      child: imagePath==null ?
-                          const Icon(Icons.person,size: 80,):
-                          Image.file(File(imagePath!),fit: BoxFit.cover,),
+                      child: imagePath==null ?CircleAvatar(child: const Icon(Icons.person,size: 80,),):
+                      CircleAvatar(child:Image.file(File(imagePath!),fit: BoxFit.cover,),),
+
                     ),
                   ),
                   Row(
@@ -73,7 +77,7 @@ class _NewContactPageState extends State<NewContactPage> {
                           source=ImageSource.camera;
                           _getImage();
                         },
-                        icon: Icon(Icons.camera,size: 30,),
+                        icon:const Icon(Icons.camera,size: 30,),
                         label: const Text("Capture",style: TextStyle(fontSize: 18),),
                       ),
                       TextButton.icon(
@@ -81,7 +85,7 @@ class _NewContactPageState extends State<NewContactPage> {
                           source=ImageSource.gallery;
                           _getImage();
                         },
-                        icon: Icon(Icons.photo_album,size: 30,),
+                        icon:const Icon(Icons.photo_album,size: 30,),
                         label: const Text("Gallery",style: TextStyle(fontSize: 18),),
                       ),
                     ],
@@ -118,8 +122,8 @@ class _NewContactPageState extends State<NewContactPage> {
               },
 
             ),
-            const SizedBox(height: 10,),
 
+            const SizedBox(height: 10,),
             TextFormField(
               style:const TextStyle(fontSize: 20,color: Colors.white),
               keyboardType: TextInputType.phone,
@@ -148,8 +152,8 @@ class _NewContactPageState extends State<NewContactPage> {
               },
 
             ),
-            const SizedBox(height: 10,),
 
+            const SizedBox(height: 10,),
             TextFormField(
               style:const TextStyle(fontSize: 20,color: Colors.white),
               controller: _emailController,
@@ -173,8 +177,8 @@ class _NewContactPageState extends State<NewContactPage> {
               },
 
             ),
-            const SizedBox(height: 10,),
 
+            const SizedBox(height: 10,),
             TextFormField(
               style:const TextStyle(fontSize: 20,color: Colors.white),
               controller: _addressController,
@@ -197,8 +201,8 @@ class _NewContactPageState extends State<NewContactPage> {
               },
 
             ),
-            const SizedBox(height: 10,),
 
+            const SizedBox(height: 10,),
             Card(
              shape: RoundedRectangleBorder(
                borderRadius: BorderRadius.circular(20),
@@ -210,10 +214,10 @@ class _NewContactPageState extends State<NewContactPage> {
                   children: [
                     TextButton.icon(
                         onPressed: _showCalender,
-                        icon: Icon(Icons.calendar_month,color: Colors.white,),
-                        label: const Text("Date of Birth",style: TextStyle(fontSize: 16,color: Colors.white),),
+                        icon:const Icon(Icons.calendar_month,color: Colors.white,),
+                        label: const Text("Date of Birth : ",style: TextStyle(fontSize: 20,color: Colors.white),),
                     ),
-                     Text(dob == null ? "No Date Chosen" : dob!),
+                     Text(dob == null ? "No Date Chosen" : dob!,style: const TextStyle(fontSize: 19,fontWeight: FontWeight.bold),),
 
                   ],
                 ),
@@ -228,7 +232,29 @@ class _NewContactPageState extends State<NewContactPage> {
 
 
   void _saveContact() {
-     if(formKey.currentState!.validate()){}
+     if(formKey.currentState!.validate()){
+       final contact=ContactModel(
+           name: _nameController.text,
+           mobile: _mobileController.text,
+           email: _emailController.text,
+           streetAddress: _addressController.text,
+           image: imagePath,
+           dob: dob,
+       );
+       Provider
+           .of<ContactProvider>(context,listen: false)
+           .insert(contact).then((id) {
+             contact.id = id;
+         Provider
+             .of<ContactProvider>(context,listen: false).updateList(contact);
+
+             Navigator.pop(context);
+       }).catchError((error){
+         print(error.toString());
+         showMsg(context, "Failed to Save");
+
+       });
+     }
   }
 
   void _showCalender() async{
@@ -242,7 +268,6 @@ class _NewContactPageState extends State<NewContactPage> {
        setState(() {
          dob = getFormattedDate(datetime, 'dd-MM-yyyy');
        });
-
      }
   }
 
