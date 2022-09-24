@@ -16,6 +16,18 @@ class ContactProvider extends ChangeNotifier {
   Future<ContactModel> getById(int? id) =>
       DbHelper.getById(id);
 
+  void deleteById(int? id){
+    DbHelper.deleteById(id).then((_) {
+          final contact=contactList.firstWhere((element) => element.id==id);
+          contactList.remove(contact);
+          notifyListeners();
+    });
+  }
+  
+  Future<int>updateById(int? id,String column,dynamic value){
+    return DbHelper.updateById(id, column, value);
+  }
+
   void updateList(ContactModel contactModel) {
     contactList.add(contactModel);
     notifyListeners();

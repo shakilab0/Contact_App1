@@ -65,7 +65,11 @@ class _NewContactPageState extends State<NewContactPage> {
                     height: 120,
                     child: Card(
                       child: imagePath==null ?CircleAvatar(child: const Icon(Icons.person,size: 80,),):
-                      CircleAvatar(child:Image.file(File(imagePath!),fit: BoxFit.cover,),),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child:Image.file(File(imagePath!),fit: BoxFit.cover,),
+                          ),
+
 
                     ),
                   ),

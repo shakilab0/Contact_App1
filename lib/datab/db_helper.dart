@@ -11,6 +11,7 @@ class DbHelper{
   $tblContactColEmail text,
   $tblContactColAddress text,
   $tblContactColImage text,
+  $tblContactColWebsite text,
   $tblContactColFavorite integer,
   $tblContactColDob text)''';
 
@@ -18,8 +19,12 @@ class DbHelper{
   static Future<Database>open()async{
     final rootPath=await getDatabasesPath();
     final dbPath=Path.join(rootPath,'contact.db');
-    return openDatabase(dbPath,version: 1,onCreate: (db,version)async{
+    return openDatabase(dbPath,version: 2,onCreate: (db,version)async{
       await db.execute(createTableContact);
+    },onUpgrade: (db,oldVersion,newVersion)async{
+      if(newVersion==2){
+        db.execute("alter table $tblContact add column $tblContactColWebsite text");
+      }
     });
   }
 
@@ -39,6 +44,18 @@ class DbHelper{
     final mapList=await db.query(tblContact,where: '$tblContactColId=?',whereArgs: [id]);
     return  ContactModel.fromMap(mapList.first);
   }
+
+
+  static Future<int> deleteById(int? id) async {
+    final db = await open();
+    return db.delete(tblContact, where: '$tblContactColId = ?', whereArgs: [id]);
+  }
+
+  static Future<int> updateById(int? id,String column,dynamic value)async{
+    final db=await open();
+    return db.update(tblContact, {column:value},where: '$tblContactColId = ?',whereArgs: [id]);
+  }
+
 
 
 }

@@ -1,13 +1,21 @@
 import 'package:contact_app1/models/contact_model.dart';
 import 'package:contact_app1/providers/cantact_provider.dart';
+import 'package:contact_app1/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 
-class ContactDetailsPage extends StatelessWidget {
+import 'package:url_launcher/url_launcher_string.dart';
+
+class ContactDetailsPage extends StatefulWidget {
   static const String routeName='/contact_details';
   const ContactDetailsPage({Key? key}) : super(key: key);
 
+  @override
+  State<ContactDetailsPage> createState() => _ContactDetailsPageState();
+}
+
+class _ContactDetailsPageState extends State<ContactDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final argList= ModalRoute.of(context)!.settings.arguments as List;
@@ -29,7 +37,7 @@ class ContactDetailsPage extends StatelessWidget {
                   return ListView(
                     children: [
                       contact.image==null?
-                          Icon(Icons.person,size: 50,):
+                          const Icon(Icons.person,size: 50,):
                       Image.file(File(contact.image!), width: double.infinity, height: 250, fit: BoxFit.cover,),
                       ListTile(
                           title: Text(contact.mobile),
@@ -37,7 +45,9 @@ class ContactDetailsPage extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _callContact(contact.mobile);
+                                },
                                 icon: const Icon(Icons.call),
                               ),
                               IconButton(
@@ -53,8 +63,24 @@ class ContactDetailsPage extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
+                                onPressed: () {
+                                  showUpdateDialog(
+                                      context: context,
+                                      title: "Email",
+                                      onSaved: (value)async{
+                                        await provider.updateById(id,tblContactColEmail, value);
+                                        setState(() {
+
+                                        });
+                                      },
+                                  );
+
+                                },
+                                icon:const Icon(Icons.edit),
+                              ),
+                              if(contact.email!.isNotEmpty)IconButton(
                                 onPressed: () {},
-                                icon: Icon(contact.email!.isEmpty ? Icons.edit : Icons.email),
+                                icon:const Icon(Icons.email),
                               ),
                             ],
                           )
@@ -65,14 +91,29 @@ class ContactDetailsPage extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
+                                onPressed: () {
+                                  showUpdateDialog(
+                                    context: context,
+                                    title: "Email",
+                                    onSaved: (value)async{
+                                      await provider.updateById(id,tblContactColAddress, value);
+                                      setState(() {
+
+                                      });
+                                    },
+                                  );
+                                },
+                                icon:const Icon(Icons.edit ),
+                              ),
+                              if(contact.email!.isNotEmpty)IconButton(
                                 onPressed: () {},
-                                icon: Icon(contact.streetAddress!.isEmpty ? Icons.edit : Icons.location_city),
+                                icon:const Icon(Icons.location_city),
                               ),
                             ],
                           )
                       ),
 
-                          
+
                     ],
                   );
                 }
@@ -86,5 +127,14 @@ class ContactDetailsPage extends StatelessWidget {
             ),
       ),
     );
+  }
+
+  void _callContact(String mobile)async {
+    final url='tel:$mobile';
+    if(await canLaunchUrlString(url)){
+      await launchUrlString(url);
+    }else{
+      showMsg(context, 'Cannot perform this operation');
+    }
   }
 }

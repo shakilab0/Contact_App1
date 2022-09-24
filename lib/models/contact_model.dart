@@ -6,6 +6,7 @@ const String tblContactColEmail="email";
 const String tblContactColAddress="address";
 const String tblContactColDob="dob";
 const String tblContactColImage="image";
+const String tblContactColWebsite="Website";
 const String tblContactColFavorite="favorite";
 
 class ContactModel{
@@ -17,6 +18,7 @@ class ContactModel{
   String? streetAddress;
   String? dob;
   String? image;
+  String? website;
   bool favorite;
 
   ContactModel({
@@ -27,6 +29,7 @@ class ContactModel{
     this.streetAddress,
     this.dob,
     this.image,
+    this.website,
     this.favorite=false,
   });
 
@@ -38,6 +41,7 @@ class ContactModel{
       tblContactColAddress:streetAddress,
       tblContactColDob:dob,
       tblContactColImage:image,
+      tblContactColWebsite:website,
       tblContactColFavorite: favorite ? 1 : 0,
     };
     if(id!= null){
@@ -54,6 +58,7 @@ class ContactModel{
         email: map[tblContactColEmail],
         streetAddress: map[tblContactColAddress],
         image: map[tblContactColImage],
+        website: map[tblContactColWebsite],
         dob: map[tblContactColDob],
         favorite: map[tblContactColFavorite]==1 ? true:false,
       );
